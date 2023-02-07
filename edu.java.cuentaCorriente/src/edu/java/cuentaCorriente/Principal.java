@@ -22,6 +22,7 @@ public class Principal {
 		Scanner entradaOpcion = new Scanner(System.in);		
 		Boolean cerrarMenu = false;
 		int opcion;
+		String dniUsuario;
 		while(!cerrarMenu) {	
 			//Mostramos el menú
 			mostrarMenu();
@@ -31,16 +32,28 @@ public class Principal {
 			
 			switch (opcion) {			
 				case 1:
+					// CREAR CUENTA
 					listaCcc.add(ccc.crearCuenta());					
 					System.out.println("Cuenta creada: " + listaCcc.get(listaCcc.size()-1).toString());
 					break;
 				case 2:
-					//llamams al método
+					// INGRESAR DINERO
+					//llamamos al método
 					listaCcc = ccc.ingresoCuenta(listaCcc);
 					break;
 				case 3:
+					// RETIRAR DINERO
+					// Pedimos el DNI del usuario
+					System.out.print("Introduzca su DNI: ");
+					dniUsuario = entradaOpcion.next();
+					listaCcc = ccc.retirarDineroCuenta(listaCcc, dniUsuario);
 					break;
 				case 4:
+					// MOSTRAR INFORMACIÓN
+					// Pedimos el DNI del usuario
+					System.out.print("Introduzca su DNI: ");
+					dniUsuario = entradaOpcion.next();
+					ccc.mostrarCuentasUsuario(dniUsuario, listaCcc);
 					break;
 				case 5:
 					cerrarMenu = true;
@@ -48,7 +61,9 @@ public class Principal {
 				default:
 
 			}
-		}		
+		}
+		
+		entradaOpcion.close();
 
 	}
 	static void mostrarMenu() {

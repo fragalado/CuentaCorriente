@@ -1,6 +1,5 @@
 package edu.java.cuentaCorriente;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -120,7 +119,7 @@ public class CuentaCorriente {
 			double saldoActual = bd.get(contador).getSaldo();
 			bd.get(contador).setSaldo(saldoActual+ingreso);
 			double saldoNuevo = saldoActual+ingreso;
-			System.out.println("Saldo anterior: "+saldoActual+"Saldo nuevo: "+ingreso);
+			System.out.println("Saldo anterior: "+saldoActual+"; Saldo nuevo: "+ingreso);
 		}else {
 			System.out.println("No existe cuenta para el dni indicaco: "+opcionEntradaDni);
 			return bd;
@@ -128,10 +127,68 @@ public class CuentaCorriente {
 		return bd;
 	}
 	
-	public ArrayList<CuentaCorriente> mostrarCuentasUsuario(String dniUsuario){
+	public void mostrarCuentasUsuario(String dniUsuario, List<CuentaCorriente> listaBD){
+		// Buscamos la cuenta del usuario (suponemos que solo tiene una)
+		// Para buscar vamos a usar un método privado
+		CuentaCorriente usuario = buscaCuentaUsuario(listaBD, dniUsuario);
 		
-		return null;		
+		// Ahora ya podemos mostrar la información de la cuenta
+		System.out.println("\nDNI: "+ usuario.getDni() +  "; Nombre titular: "+usuario.getNombreTitular()
+			+ "; Saldo: "+ usuario.getSaldo());
 	}
 	
+	// MÉTODO AUXILIAR
+	private CuentaCorriente buscaCuentaUsuario(List<CuentaCorriente> listaBD, String dniUsuario) {
+		CuentaCorriente aux = new CuentaCorriente();
+		for (CuentaCorriente var : listaBD) {
+			if(var.getDni().equals(dniUsuario)) {
+				aux = var;
+				break;
+			}
+		}
+		return aux;
+	}
+	
+	/**
+	 * Metodo retirar dinero
+	 * ENTRADA:
+	 * SALIDA:
+	 */
+	public List<CuentaCorriente> retirarDineroCuenta(List<CuentaCorriente> listaBD, String dniUsuario) {
+		//
+		// Declaramos las variables que vamos a necesitar
+		double saldoActual, saldoRetirar, saldoRestante;
+		Scanner entradaSaldoRetirar = new Scanner(System.in);
+		
+		// Buscamos la cuenta del usuario (suponemos que solo tiene una)
+		// Para buscar vamos a usar un método privado
+		CuentaCorriente usuario = buscaCuentaUsuario(listaBD, dniUsuario);
+		
+		// Ahora vamos a pedir el dinero a retirar
+		System.out.println("Saldo a retirar: ");
+		saldoRetirar = entradaSaldoRetirar.nextDouble();
+		
+		// Para comprobar si tiene saldo suficiente vamos a coger el saldo actual de la cuenta
+		saldoActual = listaBD.get(listaBD.indexOf(usuario)).getSaldo();
+		
+		if(saldoActual > saldoRetirar) {
+			
+			// Si el saldo de la cuenta es mayor que el saldo a retirar, podremos completar la operación
+			// Con el saldo actual y el saldo a retirar, vamos a calcular el saldo restante
+			saldoRestante = saldoActual - saldoRetirar;
+			// Actualizamos el saldo de la cuenta
+			listaBD.get(listaBD.indexOf(usuario)).setSaldo(saldoRestante);
+			
+			// Mostraremos el saldo restante
+			System.out.println("Saldo restante: "+ saldoRestante);
+		}
+		else {
+			// Mostraremos un mensaje de error
+			System.err.println("No hay suficiente saldo en la cuenta");
+		}
+		
+		// Devolvemos la lista actualizada
+		return listaBD;
+	}
 	
 }
