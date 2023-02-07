@@ -70,6 +70,13 @@ public class CuentaCorriente {
 	}
 	
 	//Métodos
+	
+	/**
+	 * Metodo crear cuenta
+	 * RECIBE: nada
+	 * DEVUELVE: CuentaCorriente
+	 * @return
+	 */
 	public CuentaCorriente crearCuenta () {
 		
 		System.out.println("CREAR CUENTA: ");
@@ -94,6 +101,13 @@ public class CuentaCorriente {
 		return cccInicializado;*/
 	}
 	
+	/**
+	 * Metodo Ingresar dinero cuenta
+	 * ENTRADA: List<CuentaCorriente> listaBD (nuestra base de datos)
+	 * SALIDA: Devuelve una lista de CuentaCorriente
+	 * @param bd
+	 * @return
+	 */
 	public List<CuentaCorriente> ingresoCuenta(List<CuentaCorriente> bd) {
 		System.out.println("INGRESO CUENTA: ");
 		//pedir dni
@@ -127,14 +141,29 @@ public class CuentaCorriente {
 		return bd;
 	}
 	
+	/**
+	 * Metodo Mostrar cuentas
+	 * RECIBE: List<CuentaCorriente> listaBD (nuestra base de datos), String dniUsuario
+	 * DEVUELVE: Nada
+	 * @param dniUsuario
+	 * @param listaBD
+	 */
 	public void mostrarCuentasUsuario(String dniUsuario, List<CuentaCorriente> listaBD){
 		// Buscamos la cuenta del usuario (suponemos que solo tiene una)
 		// Para buscar vamos a usar un método privado
 		CuentaCorriente usuario = buscaCuentaUsuario(listaBD, dniUsuario);
 		
-		// Ahora ya podemos mostrar la información de la cuenta
-		System.out.println("\nDNI: "+ usuario.getDni() +  "; Nombre titular: "+usuario.getNombreTitular()
-			+ "; Saldo: "+ usuario.getSaldo());
+		// Tenemos que comprobar si la cuenta existe o no
+		// Si no existe mostraremos mensaje de error
+		if(listaBD.contains(usuario)) {
+			// SI ENTRA AQUI ES PORQUE LA CUENTA EXISTE
+			// Ahora ya podemos mostrar la información de la cuenta
+			System.out.println("\nDNI: "+ usuario.getDni() +  "; Nombre titular: "+usuario.getNombreTitular()
+				+ "; Saldo: "+ usuario.getSaldo());
+		}
+		else {
+			System.err.println("No existe cuenta para el dni indicaco: "+dniUsuario);
+		}
 	}
 	
 	// MÉTODO AUXILIAR
@@ -151,8 +180,8 @@ public class CuentaCorriente {
 	
 	/**
 	 * Metodo retirar dinero
-	 * ENTRADA:
-	 * SALIDA:
+	 * ENTRADA: List<CuentaCorriente> listaBD (nuestra base de datos), String dniUsuario
+	 * SALIDA: Devuelve una lista de CuentaCorriente
 	 */
 	public List<CuentaCorriente> retirarDineroCuenta(List<CuentaCorriente> listaBD, String dniUsuario) {
 		//
@@ -164,27 +193,34 @@ public class CuentaCorriente {
 		// Para buscar vamos a usar un método privado
 		CuentaCorriente usuario = buscaCuentaUsuario(listaBD, dniUsuario);
 		
-		// Ahora vamos a pedir el dinero a retirar
-		System.out.println("Saldo a retirar: ");
-		saldoRetirar = entradaSaldoRetirar.nextDouble();
-		
-		// Para comprobar si tiene saldo suficiente vamos a coger el saldo actual de la cuenta
-		saldoActual = listaBD.get(listaBD.indexOf(usuario)).getSaldo();
-		
-		if(saldoActual > saldoRetirar) {
+		// Vamos a comprobar si la cuenta existe
+		// Si entra dentro del if será porque la cuenta existe
+		if(listaBD.contains(usuario)) {
+			// Ahora vamos a pedir el dinero a retirar
+			System.out.println("Saldo a retirar: ");
+			saldoRetirar = entradaSaldoRetirar.nextDouble();
 			
-			// Si el saldo de la cuenta es mayor que el saldo a retirar, podremos completar la operación
-			// Con el saldo actual y el saldo a retirar, vamos a calcular el saldo restante
-			saldoRestante = saldoActual - saldoRetirar;
-			// Actualizamos el saldo de la cuenta
-			listaBD.get(listaBD.indexOf(usuario)).setSaldo(saldoRestante);
+			// Para comprobar si tiene saldo suficiente vamos a coger el saldo actual de la cuenta
+			saldoActual = listaBD.get(listaBD.indexOf(usuario)).getSaldo();
 			
-			// Mostraremos el saldo restante
-			System.out.println("Saldo restante: "+ saldoRestante);
+			if(saldoActual > saldoRetirar) {
+				
+				// Si el saldo de la cuenta es mayor que el saldo a retirar, podremos completar la operación
+				// Con el saldo actual y el saldo a retirar, vamos a calcular el saldo restante
+				saldoRestante = saldoActual - saldoRetirar;
+				// Actualizamos el saldo de la cuenta
+				listaBD.get(listaBD.indexOf(usuario)).setSaldo(saldoRestante);
+				
+				// Mostraremos el saldo restante
+				System.out.println("Saldo restante: "+ saldoRestante);
+			}
+			else {
+				// Mostraremos un mensaje de error
+				System.err.println("No hay suficiente saldo en la cuenta");
+			}
 		}
 		else {
-			// Mostraremos un mensaje de error
-			System.err.println("No hay suficiente saldo en la cuenta");
+			System.err.println("No existe cuenta para el dni indicaco: "+dniUsuario);
 		}
 		
 		// Devolvemos la lista actualizada
